@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function Promise(executor){
+            this.state = 'pending';
+            this.value = undefined;
+            this.reason = undefined;
+            this.onFulfilledFunctions = [];
+            this.onRejectedFunctions = [];
+            const resolve = (value)=>{
+                if(this.state==='pending'){
+                    this.state = 'fulfilled';
+                    this.value = value;
+                    this.onFulfilledFunctions.forEach(fn=>fn(value))
+                }
+            }
+            const reject = (reason)=>{
+                if(this.state === 'pending'){
+                    this.reason = reason;
+                    this.state = 'rejected';
+                    this.onRejectedFunctions.forEach(fn=>fn(reason))
+                }
+            }
+            executor(resolve,reject)
+        }
+        Promise.prototype.then = function(onFulfilled, onRejected){
+            let promise2 = new Promise((resolve, reject)=>{
+                if(this.state==='pending'){
+                    this.onFulfilledFunctions.push(()=>{
+                        try{
+                            let x = onFulfilled(this.value)
+                            resolvePromise(promise2, x, resolve, reject)               
+                        }catch(e){
+                            reject(e)
+                        }
+                    })
+                    this.onRejectedFunctions.push(()=>{
+                        try{
+                            let x = onRejected(this.reason)
+                            resolvePromise(promise2, x, resolve, reject)               
+                        }catch(e){
+                            reject(e)
+                        }
+                    })
+                }
+                if(this.status === 'fulfilled'){
+                    try{
+                        let x = onFulfilled(this.value)
+                        resolvePromise(promise2, x, resolve, reject)               
+                    }catch(e){
+                        reject(e)
+                    }
+                }
+                if(this.status === 'rejected'){
+                    try{
+                        let x = onRejected(this.reason)
+                        resolvePromise(promise2, x, resolve, reject)               
+                    }catch(e){
+                        reject(e)
+                    }
+                }
+
+            })
+            return promise2;
+        }
+
+        function resolvePromise(promise2, previous, resolve, reject){
+            if(promise2 === previous){
+                reject(new TypeError('promise 循环引用'))
+            }
+            let called = false;
+            if( previous !== null && (typeof previous === 'object' || typeof previous === 'function')){
+                try{
+                    let then = previous.then;
+                    if(typeof then === 'function'){
+                        then.call(previous, v =>{
+                            if(called) return
+                            called = true;
+                            resolvePromise(promise2, v, resolve, reject);
+                        }, r =>{
+                            if(called) return
+                            called = true;
+                            reject(r)
+                        })
+                    }else{
+                        resolve(previous)
+                    }
+                }catch(e){
+                    reject(e)
+                }
+            }else{
+                resolve(previous)
+            }
+        }
+
+        //test
+        let p = new Promise(function (resolve, reject) {
+            console.log('start')
+            setTimeout(function(){
+                resolve('abc')
+            },1000)
+        })
+        p.then(v => {
+            console.log('success： ', v)
+            // return v 
+            // return 1 
+            return {a : 1} 
+            // return undefined 
+            // 5 不写return
+        },(v) => {
+            console.log('error： ',  v)
+        }).then((v) => {
+            console.log('success： ',  v)
+        },(v) => {
+            console.log('error： ',  v)
+        })
+        console.log('end')
+
+
+    </script>
+</body>
+</html>
