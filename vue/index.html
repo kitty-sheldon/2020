@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-33">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>handwrite vue</title>
+    <div>请看控制台</div>
+    <div id="app">
+        <p>{{name}}</p>
+        <p v-text="name"></p>
+        <p>{{age}}</p>
+        <p>{{doubleAge}}</p>
+        <input type="text" v-model="name"></input>
+        <button @click="changeName">哈哈</button>
+        <div v-html="html"></div>
+    </div>
+</head>
+<body>
+    <script src="./compile.js"></script>
+    <script src="./vue.js"></script>
+
+    <script>
+        const app = new Vue({
+            el:'#app',
+            data:{
+                name:'xx',
+                age:'111',
+                foo:'1',
+                bar:{
+                    a: 'ddd'
+                }
+            },
+            created() {
+                console.log("开始啦");
+                setTimeout(() => {
+                    this.name = "我是测试";
+                }, 1500);
+            },
+        })
+        app.$data.foo = 2
+        app.$data.bar.a = 'hhh'
+    </script>
+</body>
+</html>
