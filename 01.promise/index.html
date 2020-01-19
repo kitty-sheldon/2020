@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Promise</title>
+    <div>请看控制台</div>
+
+</head>
+<body>
+    <script>
+        function Promise(executor){
+            /*初始化
+            state 状态    pending fulfilled rejected
+            value 成功的返回值
+            reason 失败的原因
+            onFulfilledFunctions 存储成功的回调函数
+            onRejectedFunctions  存储失败的回调函数
+            */
+            this.state = 'pending';             
+            this.value = undefined;                    
+            this.reason = undefined;
+            this.onFulfilledFunctions = [];
+            this.onRejectedFunctions = [];
+            const resolve = (value)=>{
+                //只在pending时可以改变状态，状态一旦改变无法再更改
+                if(this.state==='pending'){
+                    this.state = 'fulfilled';       //成功
+                    this.value = value;
+                    this.onFulfilledFunctions.forEach(fn=>fn(value)) //发布
+                }
+            }
+            const reject = (reason)=>{
+                if(this.state === 'pending'){
+                    this.reason = reason;
+                    this.state = 'rejected';        //失败
+                    this.onRejectedFunctions.forEach(fn=>fn(reason))
+                }
+            }
+            executor(resolve,reject)
+        }
+        Promise.prototype.then = function(onFulfilled, onRejected){
+            //promise可以then链式调用的原因：then方法返回了一个promise实例
+            let promise2 = new Promise((resolve, reject)=>{
+                if(this.state==='pending'){
+                    //订阅
+                    this.onFulfilledFunctions.push(()=>{
+                        try{
+                            let x = onFulfilled(this.value)
+                            resolvePromise(promise2, x, resolve, reject)               
+                        }catch(e){
+                            reject(e)
+                        }
+                    })
+                    this.onRejectedFunctions.push(()=>{
+                        try{
+                            let x = onRejected(this.reason)
+                            resolvePromise(promise2, x, resolve, reject)               
+                        }catch(e){
+                            reject(e)
+                        }
+                    })
+                }
+                if(this.status === 'fulfilled'){
+                    try{
+                        let x = onFulfilled(this.value)
+                        resolvePromise(promise2, x, resolve, reject)               
+                    }catch(e){
+                        reject(e)
+                    }
+                }
+                if(this.status === 'rejected'){
+                    try{
+                        let x = onRejected(this.reason)
+                        resolvePromise(promise2, x, resolve, reject)               
+                    }catch(e){
+                        reject(e)
+                    }
+                }
+
+            })
+            return promise2;
+        }
+
+        function resolvePromise(promise2, previous, resolve, reject){
+            if(promise2 === previous){
+                reject(new TypeError('promise 循环引用'))
+            }
+            let called = false;     //tag，成功、失败只调用其中一个
+            if( previous !== null && (typeof previous === 'object' || typeof previous === 'function')){
+                try{
+                    let then = previous.then;
+                    if(typeof then === 'function'){
+                        then.call(previous, v =>{
+                            if(called) return
+                            called = true;
+                            resolvePromise(promise2, v, resolve, reject);       //递归
+                        }, r =>{
+                            if(called) return
+                            called = true;
+                            reject(r)
+                        })
+                    }else{
+                        resolve(previous)
+                    }
+                }catch(e){
+                    reject(e)
+                }
+            }else{
+                resolve(previous)
+            }
+        }
+
+        //test
+        let p = new Promise(function (resolve, reject) {
+            console.log('start')
+            setTimeout(function(){
+                resolve('abc')
+            },1000)
+        })
+        p.then(v => {
+            console.log('success： ', v)
+            // return v 
+            // return 1 
+            return {a : 1} 
+            // return undefined 
+            // 5 不写return
+        },(v) => {
+            console.log('error： ',  v)
+        }).then((v) => {
+            console.log('success： ',  v)
+        },(v) => {
+            console.log('error： ',  v)
+        })
+        console.log('end')
+
+
+    </script>
+</body>
+</html>
