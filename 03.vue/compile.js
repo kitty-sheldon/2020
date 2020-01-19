@@ -67,8 +67,14 @@ class Compile {
     text(node, exp) {
         this.update(node, exp, 'text');
     }
+    //双向绑定
     model(node, exp) {
-        this.update(node, exp, 'model');
+        //更新input框内容
+        this.update(node, exp, 'model'); 
+        //监听输入，更新数据
+        node.addEventListener('input',e=>{
+            this.$vm[exp] = e.target.value;
+        })
     }
     html(node, exp) {
         this.update(node, exp, 'html');
