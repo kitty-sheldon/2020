@@ -1,78 +1,101 @@
-//模板浏览器不认识，需要编译成浏览器认识的
-//如v- @ : {{}} 
-class Compile{
-    constructor(el, vm){
-        this.$el = document.querySelector(el);  //要遍历的宿主节点
+class Compile {
+    constructor(el, vm) {
+        this.$el = document.querySelector(el);
         this.$vm = vm;
-        if(this.$el){
-            //生成片段
-            this.$fragment = this.nodeToFragment(this.$el);   
-            //编译 
+        if (this.$el) {
+            this.$fragment = this.nodeToFragment(this.$el);
             this.compile(this.$fragment);
-            /**
-             * 将编译完的html追加至el中
-             * 因nodeToFragment中将this.$el移空了，所以append不会有重复
-             */
-            this.$el.appendChild(this.$fragment);                 
+            this.$el.appendChild(this.$fragment);
         }
     }
-
-    //将dom变为片段，操作片段，避免直接操作dom
-    nodeToFragment(el){
-        const fragement = document.createDocumentFragment();
-        //将el中子元素移动至fragment中,直到el为空
+    nodeToFragment(el) {
+        let frag = document.createDocumentFragment();
         let child;
-        //firstChild有值会一直执行，直至el中没有元素
-        while(child=el.firstChild){
-            fragement.appendChild(child)  //appendChild如果被插入的节点已经存在于当前文档的文档树中,则那个节点会首先从原先的位置移除,然后再插入到新的位置.
+        while ((child = el.firstChild)) {
+            frag.appendChild(child)
         }
-        return fragement
+        return frag;
     }
-
-    compile(el){
+    compile(el) {
         const childNodes = el.childNodes;
-        Array.from(childNodes).forEach(node=>{
-            //类型判断,区分元素和文本
-            if(this.isElement(node)){
-                console.log('元素')
-            }else if(this.isInterpolation(node)){
-                console.log('插值文本')
+        Array.from(childNodes).forEach(node => {
+            if (this.isElement(node)) {
+                this.compileElement(node)
+            }else if (this.isInterpolation(node)) {
                 this.compileText(node)
             }
-            //递归子节点
             if(node.childNodes && node.childNodes.length > 0){
                 this.compile(node)
             }
         })
     }
-    
-    //判断元素
-    isElement(node){
-        return node.nodeType === 1;
+    isElement(el) {
+        return el.nodeType === 1;
     }
-
-    //判断插入文本，非普通文本，普通文本无需监听
-    isInterpolation(node){
-        return node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent);
+    isInterpolation(el) {
+        return el.nodeType === 3 && /\{\{(.*)\}\}/.test(el.textContent);
     }
-
-    //编译文本
-    compileText(node){
-        //node.textContent = this.$vm.$data[RegExp.$1]
-        this.update(node, this.$vm, RegExp.$1, 'text')
+    isDirective(exp) {
+        return exp.indexOf('v-') === 0;
     }
-
-    //更新函数
-    update(node, vm, exp, type){
-        const updateFn = this[`${type}Updater`]
-        updateFn && updateFn(node, vm.$data[exp])
-        //依赖收集
-        new Watcher(vm, exp, (value)=>{
-            updateFn && updateFn(node, value)
+    isEvent(exp) {
+        return exp.indexOf('@') === 0;
+    }
+    compileElement(node) {
+        const attributes = node.attributes;
+        Array.from(attributes).forEach(attr => {
+            const {
+                name,
+                value
+            } = attr;
+            if (this.isDirective(name)) {
+                //v-text v-model v-html
+                const direct = name.substring(2);
+                this[direct] && this[direct](node, value)
+            }
+            if (this.isEvent(name)) {
+                //@click
+                const eventName = name.substring(1);
+                this.eventHandler(node, eventName, value);
+            }
         })
     }
-
+    text(node, exp) {
+        this.update(node, exp, 'text');
+    }
+    model(node, exp) {
+        this.update(node, exp, 'model');
+    }
+    html(node, exp) {
+        this.update(node, exp, 'html');
+    }
     textUpdater(node, value) {
         node.textContent = value;
+    }
+    modelUpdater(node, value) {
+        node.value = value;
+    }
+    htmlUpdater(node, value) {
+        node.innerHTML = value;
+    }
+    update(node, exp, name) {
+        const vm = this.$vm;
+        const method = `${name}Updater`;
+        //初始化渲染
+        method && this[method](node, this.$vm[exp]);
+        new Watcher(vm, exp, value=>{
+            method && this[method](node, value);
+        })
+    }
+    compileText(node) {
+        this.text(node, RegExp.$1);
+    }
+    eventHandler(node, name, fnName){
+        const vm = this.$vm;
+        const {$methods} = vm;
+        const fn = $methods && $methods[fnName];
+        if(fn){
+            node.addEventListener(name, fn.bind(vm))
+        }
     }
 }

@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-33">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>handwrite vue</title>
-    <div>请看控制台</div>
+    <title>Document</title>
     <div id="app">
         <p>{{name}}</p>
         <p v-text="name"></p>
         <p>{{age}}</p>
-        <p>{{doubleAge}}</p>
         <input type="text" v-model="name"></input>
-        <button @click="changeName">哈哈</button>
+        <button @click="changeData">哈哈</button>
         <div v-html="html"></div>
     </div>
 </head>
 <body>
+    <script src="./watcher.js"></script>
     <script src="./compile.js"></script>
     <script src="./vue.js"></script>
-
     <script>
-        const app = new Vue({
+        const app = new VUE({
             el:'#app',
             data:{
-                name:'xx',
-                age:'111',
+                name:'name',
+                age:'8',
                 foo:'1',
                 bar:{
                     a: 'ddd'
-                }
+                },
+                html:'<p>我是指令添加的P</p>'
             },
             created() {
-                console.log("开始啦");
+                console.log('开始啦');
                 setTimeout(() => {
-                    this.name = "我是测试";
+                    this.name = '我是测试';
                 }, 1500);
             },
+            methods:{
+                changeData(){
+                    this.name = '改名';
+                    this.age = '100';
+                }
+            }
         })
         app.$data.foo = 2
         app.$data.bar.a = 'hhh'
