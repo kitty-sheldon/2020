@@ -8,14 +8,17 @@ class Compile {
             this.$el.appendChild(this.$fragment);
         }
     }
+    //dom变为片段，减少dom操作
     nodeToFragment(el) {
         let frag = document.createDocumentFragment();
         let child;
         while ((child = el.firstChild)) {
+            //dom节点移动至片段中，会改变this.$el
             frag.appendChild(child)
         }
         return frag;
     }
+    //将片段进行编译，分别处理元素和插值文本
     compile(el) {
         const childNodes = el.childNodes;
         Array.from(childNodes).forEach(node => {
@@ -24,6 +27,7 @@ class Compile {
             }else if (this.isInterpolation(node)) {
                 this.compileText(node)
             }
+            //如果有子元素，递归编译
             if(node.childNodes && node.childNodes.length > 0){
                 this.compile(node)
             }
@@ -83,6 +87,7 @@ class Compile {
         const method = `${name}Updater`;
         //初始化渲染
         method && this[method](node, this.$vm[exp]);
+        //依赖收集
         new Watcher(vm, exp, value=>{
             method && this[method](node, value);
         })
