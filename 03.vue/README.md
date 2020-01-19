@@ -25,10 +25,14 @@
 Watcher 作为数据和模板的桥梁，在编译模板时创建watcher 设置发生变化时的回调；在数据发生变化时（被set方法拦截），通知模板更新
 
 # references：
-[思路](https://segmentfault.com/a/1190000006599500)  [appendChild](https://developer.mozilla.org/zh-CN/docs/Web/API/Node/appendChild)  [createDocumentFragment](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createDocumentFragment)
+[思路](https://segmentfault.com/a/1190000006599500)  
+[appendChild](https://developer.mozilla.org/zh-CN/docs/Web/API/Node/appendChild)  
+[createDocumentFragment](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createDocumentFragment)
 # 其他感觉不错的文章：  
-[深入理解 Vue 框架基本原理](https://juejin.im/entry/5982e16a6fb9a03c50227ef5)  [看完这篇关于MVVM的文章，面试通过率提升了80%](https://juejin.im/post/5af8eb55f265da0b814ba766)
+[深入理解 Vue 框架基本原理](https://juejin.im/entry/5982e16a6fb9a03c50227ef5)  
+[看完这篇关于MVVM的文章，面试通过率提升了80%](https://juejin.im/post/5af8eb55f265da0b814ba766)
 
 
 
 
+ 
