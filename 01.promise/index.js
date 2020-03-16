@@ -66,6 +66,9 @@ class Promise{
         })
         return promise2
     }
+    catch(reject){
+        this.then(null, reject)
+    }
 }
 
 function resolvePromise(promise2, x, resolve, reject){
@@ -98,6 +101,8 @@ function resolvePromise(promise2, x, resolve, reject){
         resolve(x)
     }
 }
+
+
 
 // promises-aplus-tests 测试代码
 Promise.defer = Promise.deferred = function () {
