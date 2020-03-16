@@ -79,6 +79,10 @@ Promise.reject = error =>{
     return new Promise((resolve,reject)=>reject(error))
 }
 
+Promise.race = promises =>{
+
+}
+
 function resolvePromise(promise2, x, resolve, reject){
     if(promise2 === x){
         return reject(new TypeError('循环引用'))
