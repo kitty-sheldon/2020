@@ -66,9 +66,17 @@ class Promise{
         })
         return promise2
     }
-    catch(reject){
-        this.then(null, reject)
+    catch(fn){
+        this.then(null, fn)
     }
+}
+
+Promise.resolve = value =>{
+    return new Promise(resolve=>resolve(value))
+}
+
+Promise.reject = error =>{
+    return new Promise((resolve,reject)=>reject(error))
 }
 
 function resolvePromise(promise2, x, resolve, reject){
