@@ -80,7 +80,33 @@ Promise.reject = error =>{
 }
 
 Promise.race = promises =>{
+    if(!Array.isArray(promises)){
+        return new TypeError('Promise.race arguments must be array')
+    }
+    return new Promise((resolve, reject)=>{
+        let length = promises.length
+        for(let i = 0; i < length; i++){
+            promises[i].then(resolve, reject)
+        }
+    })
+}
 
+Promise.all = promises => {
+    if(!Array.isArray(promises)){
+        return new TypeError('Promise.all arguments must be array')
+    }
+    return new Promise((resolve, reject)=>{
+        let length = promises.length
+        let result = []
+        let num = 0
+        for(let i = 0; i < length; i++){
+            promises[i].then(data=>{
+                num++
+                result[i] = data
+                if(num === length) resolve(result)
+            }, reject)
+        }
+    })
 }
 
 function resolvePromise(promise2, x, resolve, reject){
