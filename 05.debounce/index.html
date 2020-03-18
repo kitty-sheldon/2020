@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 100%; height: 200px; line-height: 200px; text-align: center; color: #fff; background-color: #444; font-size: 30px; margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="first">不防抖</div>
+    <div class="container" id="second">防抖</div>
+    <div class="container" id="third">防抖立即执行</div>
+    <div class="container" id="fourth">防抖取消</div>
+
+    <div></div>
+    <script src="./index.js"></script>
+    <script>
+        const containers = document.getElementsByClassName('container')
+        Array.from(containers).forEach(i=>{
+            console.log(i.attributes.id.value)
+        })
+        let count = 1;
+        let container = document.getElementById('container');
+        let btns = document.getElementsByTagName('button');
+
+        function getUserAction(e) {
+            console.log(e,'e')
+            container.innerHTML = count++;
+        };
+    //未防抖
+    //container.onmousemove = getUserAction;
+    //防抖
+    // container.onmousemove = debounce(getUserAction, 500);
+    const setFun = (id)=>{
+        console.log(this,'this')
+
+        switch(id){
+            case '1':
+                return getUserAction;
+            case '2':
+                return debounce(getUserAction, 500);
+            case '3':
+                return debounceImmediate(getUserAction, 500, true);
+                break;  
+            default:
+                return getUserAction         
+        }
+
+    }
+    Array.from(btns).forEach(i=>{
+        i.onclick = (e)=>{
+            let {id} = e.target.dataset;
+            container.innerHTML = count = 1;
+            container.onmousemove = setFun.call(this, id)
+        }
+    })
+    </script>
+
+</body>
+</html>
