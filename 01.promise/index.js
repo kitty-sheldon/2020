@@ -26,7 +26,9 @@ class Promise {
     }
     then(onFulfilled, onRejected) {
         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : val => val
-        onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err }
+        onRejected = typeof onRejected === 'function' ? onRejected : err => {
+            throw err
+        }
 
         const promise2 = new Promise((resolve, reject) => {
             const asyncFulfilled = () => {
@@ -66,7 +68,7 @@ class Promise {
         })
         return promise2
     }
-    catch(fn) {
+    catch (fn) {
         this.then(null, fn)
     }
 }
@@ -78,7 +80,9 @@ function resolvePromise(promise2, x, resolve, reject) {
     if (x != null && (typeof x === 'object' || typeof x === 'function')) {
         let called = false
         try {
-            const { then } = x
+            const {
+                then
+            } = x
             if (typeof then === 'function') {
                 then.call(x, y => {
                     if (called) return
@@ -162,4 +166,3 @@ Promise.defer = Promise.deferred = function () {
     return dfd;
 }
 module.exports = Promise;
-

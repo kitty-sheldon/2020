@@ -1,10 +1,10 @@
 function jsonp({
     url,
-    params={},
+    params = {},
     callbackName = 'callback'
 }) {
-    return new Promise((resolve,reject) => {
-        if(typeof url !== 'string'){
+    return new Promise((resolve, reject) => {
+        if (typeof url !== 'string') {
             reject(new Error('url must be string'))
         }
         let script = document.createElement('script')

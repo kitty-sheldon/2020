@@ -87,3 +87,5 @@ function test(){
     console.log('add5',add5(1)(2,3)())
     console.log('multi1',multi1(1)(2,3)(4)())
 }
+
+test()
