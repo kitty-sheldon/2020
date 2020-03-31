@@ -1,1 +1,3 @@
-const getValue = (e)=>e.target.previousSibling.value
+const getValue = (e)=>{
+  return e.target.previousSibling.value
+}
