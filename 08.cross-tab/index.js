@@ -18,11 +18,10 @@
 window.onload = ()=>{
     const {type} = performance.navigation
     const isRefresh = type === 1
-    const num = Number(localStorage.getItem('xx_broad')) || 1
-    const titleDom = document.getElementById('title').innerText = `Tab${isRefresh ? num : num+1}` 
-    //刷新
-    if(isRefresh){
-        return
+    let num = Number(localStorage.getItem('xx_broad')) || 0
+    if((num && !isRefresh) || !num){
+        num++
+        localStorage.setItem('xx_broad', num)
     }
-    localStorage.setItem('xx_broad', num+1)
+    document.getElementById('title').innerText = `Tab${num}` 
 }
