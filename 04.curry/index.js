@@ -58,8 +58,7 @@ function add4(a){
 
 //改造，提取通用柯里化函数
 function curry(fn){
-    const outerArgs = Array.prototype.slice.call(arguments, 1)
-    let arr = [].concat(outerArgs)
+    let arr = Array.prototype.slice.call(arguments, 1)
     return function temp(){
         if(arguments.length === 0){
             return fn.apply(null, arr)          
@@ -69,7 +68,7 @@ function curry(fn){
     }
 }
 
-function sum(){
+function sum(a,b){
     return Array.from(arguments).reduce((a,b)=>a+b)
 }
 
