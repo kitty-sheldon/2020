@@ -5,6 +5,7 @@ function throttle(fn, time){
     canRun = false
     setTimeout(() => {
       fn(args)
+      canRun = true
     }, time);
   }
 }
