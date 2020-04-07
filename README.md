@@ -10,5 +10,6 @@ study and practice in 2020
 07. jsonp  
 08. eventbus  
 09. reduce
+10. deepClone
 
 
