@@ -13,7 +13,7 @@ class EventBus {
     emit(name, ...rest) {
         const fns = this.caches[name]
         if (Array.isArray(fns)) {
-            fns.forEach(fn => fn(rest))
+            fns.forEach(fn => fn(...rest))
         }
         return this
     }
@@ -31,11 +31,11 @@ class EventBus {
 }
 
 const bus = new EventBus()
-event.emit('message', {
-    a: 1,
-    b: 2
-})
-
-event.on('message', (msg) => {
+bus.on('message', (...msg) => {
     console.log(msg)
 })
+bus.emit('message', {
+    a: 1,
+    b: 2
+}, [2222])
+
