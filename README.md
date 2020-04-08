@@ -17,5 +17,5 @@ study and practice in 2020
 11. call & apply
 12. bind      
   reference： [Function.prototype.bind](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
-
+13. unique 数组去重
 
