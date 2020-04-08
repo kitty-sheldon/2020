@@ -10,6 +10,6 @@ study and practice in 2020
 07. jsonp  
 08. eventbus  
 09. reduce
-10. deepClone
+10. deepClone   [如何写出一个惊艳面试官的深拷贝?](https://juejin.im/post/5d6aa4f96fb9a06b112ad5b1)
 
 
